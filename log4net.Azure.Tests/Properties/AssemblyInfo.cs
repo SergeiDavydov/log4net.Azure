@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("log4net.Azure.Tests")]
+[assembly: AssemblyTitle("log4net.Appender.Azure.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Karell Ste-Marie")]
-[assembly: AssemblyProduct("log4net.Azure.Tests")]
+[assembly: AssemblyProduct("log4net.Appender.Azure.Tests")]
 [assembly: AssemblyCopyright("Copyright ©  2012-2015 Karell Ste-Marie")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

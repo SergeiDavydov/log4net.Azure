@@ -1,10 +1,9 @@
 using System;
-using log4net.Appender;
 using log4net.Core;
 using log4net.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace log4net.Azure.Tests
+namespace log4net.Appender.Azure.Tests.Appenders
 {
     [TestClass]
     public class UnitTestAzureDynamicTableAppender
@@ -14,7 +13,7 @@ namespace log4net.Azure.Tests
         [TestInitialize]
         public void Initialize()
         {
-            _appender = new AzureTableAppender()
+            _appender = new AzureTableAppender
             {
                 ConnectionString = "UseDevelopmentStorage=true",
                 TableName = "testDynamicLoggingTable",
@@ -70,7 +69,7 @@ namespace log4net.Azure.Tests
                 LoggerName = "testLoggerName",
                 Message = "testMessage",
                 ThreadName = "testThreadName",
-                TimeStamp = DateTime.UtcNow,
+                TimeStampUtc = DateTime.UtcNow,
                 UserName = "testUsername",
                 Properties = new PropertiesDictionary(),
                 LocationInfo = new LocationInfo("className", "methodName", "fileName", "lineNumber")

@@ -5,13 +5,9 @@ using log4net.Appender.Language;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 
-namespace log4net.Appender
+namespace log4net.Appender.Entities
 {
-	/// <summary>
-	/// copied from here:
-	/// http://pascallaurin42.blogspot.de/2013/03/using-azure-table-storage-with-dynamic.html
-	/// </summary>
-	public class ElasticTableEntity : DynamicObject, ITableEntity//, ICustomMemberProvider // For LinqPad's Dump
+    public class ElasticTableEntity : DynamicObject, ITableEntity
 	{
 		public ElasticTableEntity()
 		{
@@ -82,17 +78,28 @@ namespace log4net.Appender
 		{
 			if (value == null) return new EntityProperty((string)null);
 			if (value.GetType() == typeof(byte[])) return new EntityProperty((byte[])value);
-			if (value is bool) return new EntityProperty((bool)value);
-			if (value is DateTimeOffset) return new EntityProperty((DateTimeOffset)value);
-			if (value is DateTime) return new EntityProperty((DateTime)value);
-			if (value is double) return new EntityProperty((double)value);
-			if (value is Guid) return new EntityProperty((Guid)value);
-			if (value is int) return new EntityProperty((int)value);
-			if (value is long) return new EntityProperty((long)value);
-			// ReSharper disable once CanBeReplacedWithTryCastAndCheckForNull
-			if (value is string) return new EntityProperty((string)value);
-			throw new Exception(string.Format(Resources.ElasticTableEntity_GetEntityProperty_not_supported__0__for__1_,
-				value.GetType(), key));
-		}
+			switch (value)
+            {
+                case bool b:
+                    return new EntityProperty(b);
+                case DateTimeOffset offset:
+                    return new EntityProperty(offset);
+                case DateTime time:
+                    return new EntityProperty(time);
+                case double d:
+                    return new EntityProperty(d);
+                case Guid guid:
+                    return new EntityProperty(guid);
+                case int i:
+                    return new EntityProperty(i);
+                case long l:
+                    return new EntityProperty(l);
+                case string s:
+                    return new EntityProperty(s);
+                default:
+                    throw new Exception(string.Format(Resources.ElasticTableEntity_GetEntityProperty_not_supported__0__for__1_,
+                        value.GetType(), key));
+            }
+        }
 	}
 }

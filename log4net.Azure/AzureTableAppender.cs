@@ -5,14 +5,21 @@ using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Linq;
+using log4net.Appender.Entities;
 
 namespace log4net.Appender
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AzureTableAppender" /> class.
+    /// </summary>
+    /// <remarks>
+    /// The instance of the <see cref="AzureTableAppender" /> class is set up to write 
+    /// to an azure table
+    /// </remarks>
     public class AzureTableAppender : BufferingAppenderSkeleton
     {
         private CloudStorageAccount _account;
         private CloudTableClient _client;
-        private CloudTable _table;
 
         public string ConnectionStringName { get; set; }
 
@@ -22,18 +29,15 @@ namespace log4net.Appender
         {
             get
             {
-                if (!String.IsNullOrWhiteSpace(ConnectionStringName))
+                if (!string.IsNullOrWhiteSpace(ConnectionStringName))
                 {
                     return Util.GetConnectionString(ConnectionStringName);
                 }
-                if (String.IsNullOrEmpty(_connectionString))
+                if (string.IsNullOrEmpty(_connectionString))
                     throw new ApplicationException(Resources.AzureConnectionStringNotSpecified);
                 return _connectionString;
             }
-            set
-            {
-                _connectionString = value;
-            }
+            set => _connectionString = value;
         }
 
 
@@ -43,26 +47,18 @@ namespace log4net.Appender
         {
             get
             {
-                if (String.IsNullOrEmpty(_tableName))
+                if (string.IsNullOrEmpty(_tableName))
                     throw new ApplicationException(Resources.TableNameNotSpecified);
                 return _tableName;
             }
-            set
-            {
-                _tableName = value;
-            }
+            set => _tableName = value;
         }
 
-        protected CloudTable Table {  get { return _table; } }
+        protected CloudTable Table { get; private set; }
 
         public bool PropAsColumn { get; set; }
 
-	    private PartitionKeyTypeEnum _partitionKeyType = PartitionKeyTypeEnum.LoggerName;
-        public PartitionKeyTypeEnum PartitionKeyType
-        {
-            get { return _partitionKeyType; }
-            set { _partitionKeyType = value; }
-        }
+        public PartitionKeyTypeEnum PartitionKeyType { get; set; } = PartitionKeyTypeEnum.LoggerName;
 
         protected override void SendBuffer(LoggingEvent[] events)
         {
@@ -77,7 +73,7 @@ namespace log4net.Appender
                     {
                         batchOperation.Insert(azureLoggingEvent);
                     }
-                    _table.ExecuteBatch(batchOperation);
+                    Table.ExecuteBatch(batchOperation);
                 }
             }
         }
@@ -100,8 +96,8 @@ namespace log4net.Appender
 
             _account = CloudStorageAccount.Parse(ConnectionString);
             _client = _account.CreateCloudTableClient();
-            _table = _client.GetTableReference(TableName);
-            _table.CreateIfNotExists();
+            Table = _client.GetTableReference(TableName);
+            Table.CreateIfNotExists();
         }
     }
 }

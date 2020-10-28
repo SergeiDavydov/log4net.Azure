@@ -7,9 +7,17 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using log4net.Util;
+using log4net.Appender.Entities;
 
 namespace log4net.Appender
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AsyncAzureTableAppender" /> class.
+    /// </summary>
+    /// <remarks>
+    /// The instance of the <see cref="AsyncAzureTableAppender" /> class is set up to write 
+    /// to an azure table
+    /// </remarks>
     public class AsyncAzureTableAppender : AzureTableAppender
     {
         // track the tasks currently sending data so we can wait for them when we close down
@@ -21,7 +29,6 @@ namespace log4net.Appender
         // auto-flush timer
         private Timer _autoFlushTimer;
 
-        public int BatchSize { get; set; } = 100;
         public int RetryCount { get; set; } = 5;
         public TimeSpan RetryWait { get; set; } = new TimeSpan(0, 0, 5);
         public TimeSpan FlushInterval { get; set; } = new TimeSpan(0, 1, 0);
@@ -64,7 +71,7 @@ namespace log4net.Appender
                 {
                     var sw = System.Diagnostics.Stopwatch.StartNew();
                     await Table.ExecuteBatchAsync(batchOperation);
-                    LogLog.Debug(typeof(AsyncAzureTableAppender), string.Format("Sent batch of {0} in {1}", batchOperation.Count, sw.Elapsed));
+                    LogLog.Debug(typeof(AsyncAzureTableAppender), $"Sent batch of {batchOperation.Count} in {sw.Elapsed}");
                     return;
                 }
                 catch (Exception ex)
@@ -72,11 +79,11 @@ namespace log4net.Appender
                     attempt++;
                     if (attempt >= RetryCount)
                     {
-                        LogLog.Error(typeof(AsyncAzureTableAppender), string.Format("Exception sending batch, aborting: {0}", ex.Message));
+                        LogLog.Error(typeof(AsyncAzureTableAppender), $"Exception sending batch, aborting: {ex.Message}");
                         return;
                     }
 
-                    LogLog.Warn(typeof(AsyncAzureTableAppender), string.Format("Exception sending batch, retrying: {0}", ex.Message));
+                    LogLog.Warn(typeof(AsyncAzureTableAppender), $"Exception sending batch, retrying: {ex.Message}");
 
                     // wait for a bit longer each time, and add a bit of randomness to make sure we're not retrying in lockstep
                     var wait = TimeSpan.FromSeconds(RetryWait.TotalSeconds * (attempt + GetExtraWaitModifier()));
@@ -120,7 +127,7 @@ namespace log4net.Appender
             {
                 tasks = _outstandingTasks.ToArray();
             }
-            LogLog.Debug(typeof(AsyncAzureTableAppender), string.Format("Waiting on {0} outstanding logging calls", tasks.Length));
+            LogLog.Debug(typeof(AsyncAzureTableAppender), $"Waiting on {tasks.Length} outstanding logging calls");
             Task.WaitAll(tasks);
             LogLog.Debug(typeof(AsyncAzureTableAppender), "Completing close");
         }
@@ -137,10 +144,10 @@ namespace log4net.Appender
             return messageParts.Select((m, ix) =>
             {
                 // build the entity with updated message/Sequence number
-                var entity = this.GetLogEntity(@event, m, ix);
+                var entity = GetLogEntity(@event, m, ix);
 
                 // setup the RowKey such that you could sort descending and reassemble
-                entity.RowKey = string.Format("{0}.{1:d5}", baseEntity.RowKey, messageParts.Count - ix - 1);
+                entity.RowKey = $"{baseEntity.RowKey}.{messageParts.Count - ix - 1:d5}";
 
                 return entity;
             }).ToArray();
@@ -160,23 +167,17 @@ namespace log4net.Appender
 
         private string GetMessage(ITableEntity entity)
         {
-            var eventEntity = entity as AzureDynamicLoggingEventEntity;
-            if (eventEntity != null)
+            switch (entity)
             {
-                return (string)eventEntity["message"];
+                case AzureDynamicLoggingEventEntity eventEntity:
+                    return (string)eventEntity["message"];
+                case AzureLayoutLoggingEventEntity layoutEvent:
+                    return layoutEvent.Message;
+                case AzureLoggingEventEntity loggingEvent:
+                    return loggingEvent.Message;
+                default:
+                    throw new NotSupportedException();
             }
-            var layoutEvent = entity as AzureLayoutLoggingEventEntity;
-            if (layoutEvent != null)
-            {
-                return layoutEvent.Message;
-            }
-            var loggingEvent = entity as AzureLoggingEventEntity;
-            if (loggingEvent != null)
-            {
-                return loggingEvent.Message;
-            }
-
-            throw new NotSupportedException();
         }
     }
 }

@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Globalization;
 using System.Threading.Tasks;
+using log4net.Appender.Constants;
 using log4net.Appender.Extensions;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -11,6 +12,13 @@ using log4net.Core;
 
 namespace log4net.Appender
 {
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AzureAppendBlobAppender" /> class.
+    /// </summary>
+    /// <remarks>
+    /// The instance of the <see cref="AzureAppendBlobAppender" /> class is set up to append
+    /// results to an existing blob file
+    /// </remarks>
     public class AzureAppendBlobAppender : BufferingAppenderSkeleton
     {
         private CloudStorageAccount _account;
@@ -19,7 +27,7 @@ namespace log4net.Appender
 
         public string ConnectionStringName { get; set; }
         private string _connectionString;
-        private string _lineFeed = "";
+        private string _lineFeed = string.Empty;
 
         public string ConnectionString
         {
@@ -29,14 +37,11 @@ namespace log4net.Appender
                 {
                     return Util.GetConnectionString(ConnectionStringName);
                 }
-                if (String.IsNullOrEmpty(_connectionString))
+                if (string.IsNullOrEmpty(_connectionString))
                     throw new ApplicationException(Resources.AzureConnectionStringNotSpecified);
                 return _connectionString;
             }
-            set
-            {
-                _connectionString = value;
-            }
+            set => _connectionString = value;
         }
 
         private string _containerName;
@@ -45,14 +50,11 @@ namespace log4net.Appender
         {
             get
             {
-                if (String.IsNullOrEmpty(_containerName))
+                if (string.IsNullOrEmpty(_containerName))
                     throw new ApplicationException(Resources.ContainerNameNotSpecified);
                 return _containerName;
             }
-            set
-            {
-                _containerName = value;
-            }
+            set => _containerName = value;
         }
 
         private string _directoryName;
@@ -61,14 +63,19 @@ namespace log4net.Appender
         {
             get
             {
-                if (String.IsNullOrEmpty(_directoryName))
+                if (string.IsNullOrEmpty(_directoryName))
                     throw new ApplicationException(Resources.DirectoryNameNotSpecified);
                 return _directoryName;
             }
-            set
-            {
-                _directoryName = value;
-            }
+            set => _directoryName = value;
+        }
+
+        private string _outputFormat;
+
+        public string OutputFormat
+        {
+            get => _outputFormat is null ? Format.Xml.ToLowerInvariant() : _outputFormat.ToLowerInvariant();
+            set => _outputFormat = value;
         }
 
         /// <summary>
@@ -82,7 +89,7 @@ namespace log4net.Appender
         /// </remarks>
         protected override void SendBuffer(LoggingEvent[] events)
         {
-            CloudAppendBlob appendBlob = _cloudBlobContainer.GetAppendBlobReference(Filename(_directoryName));
+            var appendBlob = _cloudBlobContainer.GetAppendBlobReference(Filename(_directoryName, _outputFormat));
             if (!appendBlob.Exists()) appendBlob.CreateOrReplace();
             else _lineFeed = Environment.NewLine;
 
@@ -91,20 +98,34 @@ namespace log4net.Appender
 
         private void ProcessEvent(LoggingEvent loggingEvent)
         {
-            CloudAppendBlob appendBlob = _cloudBlobContainer.GetAppendBlobReference(Filename(_directoryName));
-            var xml = _lineFeed + loggingEvent.GetXmlString(Layout);
-            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(xml)))
+            var appendBlob = _cloudBlobContainer.GetAppendBlobReference(Filename(_directoryName, _outputFormat));
+            var output = string.Empty;
+
+            if (OutputFormat.Equals(Format.Xml))
+            {
+                output = $"{_lineFeed}{loggingEvent.GetXmlString(Layout)}";
+            }
+            else if(OutputFormat.Equals(Format.Json))
+            {
+                //This creates invalid JSON but does what I need it to do - need to download, serialize, add and reserialize before sending back up otherwise
+                output = $"{loggingEvent.GetJsonString()}";
+            }
+            else if (OutputFormat.Equals(Format.String))
+            {
+                _lineFeed = Environment.NewLine;
+                output = $"{loggingEvent.GetString()}";
+            }
+
+            if (string.IsNullOrEmpty(output)) return;
+            using (var ms = new MemoryStream(Encoding.UTF8.GetBytes(output)))
             {
                 appendBlob.AppendBlock(ms);
             }
         }
 
-        private static string Filename(string directoryName)
+        private static string Filename(string directoryName, string fileFormat)
         {
-            return string.Format("{0}/{1}.entry.log.xml",
-                                 directoryName,
-                                 DateTime.Today.ToString("yyyy_MM_dd",
-                                                                 DateTimeFormatInfo.InvariantInfo));
+            return $"{directoryName}/{DateTime.Today.ToString("yyyy_MM_dd", DateTimeFormatInfo.InvariantInfo)}.entry.log.{fileFormat}";
         }
 
         /// <summary>

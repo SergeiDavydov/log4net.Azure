@@ -15,7 +15,7 @@ namespace log4net.Appender
     /// The instance of the <see cref="AzureQueueAppender" /> class is set up to write 
     /// to an azure storage queue
     /// </remarks>
-    public class AzureQueueAppender : BufferingAppenderSkeleton
+    public sealed class AzureQueueAppender : BufferingAppenderSkeleton
     {
         private CloudStorageAccount _account;
         private CloudQueueClient _queueClient;
@@ -25,8 +25,7 @@ namespace log4net.Appender
 
         public AzureQueueAppender()
         {
-            PatternLayout layout = new PatternLayout();
-            layout.ConversionPattern = PatternLayout.DetailConversionPattern;
+            PatternLayout layout = new PatternLayout {ConversionPattern = PatternLayout.DetailConversionPattern};
             layout.ActivateOptions();
             Layout = layout;
         }
@@ -39,14 +38,11 @@ namespace log4net.Appender
                 {
                     return Util.GetConnectionString(ConnectionStringName);
                 }
-                if (String.IsNullOrEmpty(_connectionString))
+                if (string.IsNullOrEmpty(_connectionString))
                     throw new ApplicationException(Resources.AzureConnectionStringNotSpecified);
                 return _connectionString;
             }
-            set
-            {
-                _connectionString = value;
-            }
+            set => _connectionString = value;
         }
 
         private string _queueName;
@@ -54,14 +50,11 @@ namespace log4net.Appender
         {
             get
             {
-                if (String.IsNullOrEmpty(_queueName))
+                if (string.IsNullOrEmpty(_queueName))
                     throw new ApplicationException(Resources.QueueNameNotSpecified);
                 return _queueName;
             }
-            set
-            {
-                _queueName = value;
-            }
+            set => _queueName = value;
         }
 
         /// <summary>
@@ -94,10 +87,8 @@ namespace log4net.Appender
         /// This appender requires a <see cref="Layout"/> to be set.
         /// </para>
         /// </remarks>
-        override protected bool RequiresLayout
-        {
-            get { return true; }
-        }
+        protected override bool RequiresLayout => true;
+
         /// <summary>
         /// Initialize the appender based on the options set
         /// </summary>

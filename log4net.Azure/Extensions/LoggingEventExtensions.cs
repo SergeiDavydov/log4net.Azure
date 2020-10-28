@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using log4net.Core;
 using log4net.Layout;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace log4net.Appender.Extensions
 {
@@ -11,7 +12,7 @@ namespace log4net.Appender.Extensions
     {
         internal static string GetXmlString(this LoggingEvent loggingEvent, ILayout layout = null)
         {
-            string message = loggingEvent.RenderedMessage + Environment.NewLine + loggingEvent.GetExceptionString();
+            var message = loggingEvent.RenderedMessage + Environment.NewLine + loggingEvent.GetExceptionString();
             if (layout != null)
             {
                 using (var w = new StringWriter())
@@ -57,6 +58,71 @@ namespace log4net.Appender.Extensions
             }
 
             return logXml.ToString();
+        }
+
+        internal static string GetJsonString(this LoggingEvent loggingEvent)
+        {
+            var exception = loggingEvent.GetExceptionString();
+            var message = loggingEvent.RenderedMessage;
+
+            if (!string.IsNullOrEmpty(exception))
+            {
+                message += $" | Exception: {exception}";
+                message += $" | Location: {loggingEvent.LocationInformation.FullInfo}";
+            }
+
+            var logJson = new
+            {
+                date = loggingEvent.TimeStamp.ToString(CultureInfo.InvariantCulture),
+                level = loggingEvent.Level.DisplayName,
+                appname = loggingEvent.Domain,
+                logger = loggingEvent.LoggerName,
+                thread = loggingEvent.ThreadName,
+                message
+            };
+
+            return JsonConvert.SerializeObject(logJson) + Environment.NewLine;
+        }
+
+        internal static string GetString(this LoggingEvent loggingEvent)
+        {
+            var exception = loggingEvent.GetExceptionString();
+            var message = loggingEvent.RenderedMessage;
+
+            if (!string.IsNullOrEmpty(exception))
+            {
+                message += $" | Exception: {exception}";
+                message += $" | Location: {loggingEvent.LocationInformation.FullInfo}";
+            }
+
+            var logString = $"Time : {loggingEvent.TimeStamp.ToString(CultureInfo.InvariantCulture)} | " +
+                            $"Level : {loggingEvent.Level.DisplayName} | " +
+                            $"AppName : {loggingEvent.Domain} | " +
+                            $"Logger : {loggingEvent.LoggerName} | " +
+                            $"Thread : {loggingEvent.ThreadName} | " +
+                            $"Message : {message}";
+
+            return logString + Environment.NewLine;
+        }
+
+        internal static string MakeRowKey(this LoggingEvent loggingEvent)
+        {
+            return $"{DateTime.MaxValue.Ticks - loggingEvent.TimeStamp.Ticks:D19}.{Guid.NewGuid().ToString().ToLower()}";
+        }
+
+        internal static string MakePartitionKey(this LoggingEvent loggingEvent, PartitionKeyTypeEnum partitionKeyType)
+        {
+            switch (partitionKeyType)
+            {
+                case PartitionKeyTypeEnum.LoggerName:
+                    return loggingEvent.LoggerName;
+                case PartitionKeyTypeEnum.DateReverse:
+                    // subtract from DateMaxValue the Tick Count of the current hour
+                    // so a Table Storage Partition spans an hour
+                    return $"{(DateTime.MaxValue.Ticks - loggingEvent.TimeStamp.Date.AddHours(loggingEvent.TimeStamp.Hour).Ticks + 1):D19}";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(partitionKeyType), partitionKeyType, null);
+            }
         }
     }
 }

@@ -1,9 +1,8 @@
 using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using log4net.Appender;
 using log4net.Core;
 
-namespace log4net.Azure.Tests
+namespace log4net.Appender.Azure.Tests.Appenders
 {
     [TestClass]
     public class UnitTestAzureBlobAppender
@@ -13,12 +12,12 @@ namespace log4net.Azure.Tests
         [TestInitialize]
         public void Initialize()
         {
-            _appender = new AzureBlobAppender()
-                {
-                    ConnectionString = "UseDevelopmentStorage=true",
-                    ContainerName = "testLoggingBlob",
-                    DirectoryName = "testLogging"
-                };
+            _appender = new AzureBlobAppender
+            {
+                ConnectionString = "UseDevelopmentStorage=true",
+                ContainerName = "testLoggingBlob",
+                DirectoryName = "testLogging"
+            };
             _appender.ActivateOptions();
         }
 
@@ -62,17 +61,17 @@ namespace log4net.Azure.Tests
         {
             return new LoggingEvent(
                 new LoggingEventData
-                    {
-                        Domain = "testDomain",
-                        Identity = "testIdentity",
-                        Level = Level.Critical,
-                        LoggerName = "testLoggerName",
-                        Message = "testMessage",
-                        ThreadName = "testThreadName",
-                        TimeStamp = DateTime.UtcNow,
-                        UserName = "testUsername",
-                        LocationInfo = new LocationInfo("className", "methodName", "fileName", "lineNumber")
-                    }
+                {
+                    Domain = "testDomain",
+                    Identity = "testIdentity",
+                    Level = Level.Critical,
+                    LoggerName = "testLoggerName",
+                    Message = "testMessage",
+                    ThreadName = "testThreadName",
+                    TimeStampUtc = DateTime.UtcNow,
+                    UserName = "testUsername",
+                    LocationInfo = new LocationInfo("className", "methodName", "fileName", "lineNumber")
+                }
                 );
         }
     }

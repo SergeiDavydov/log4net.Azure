@@ -1,29 +1,27 @@
-using System;
+﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using log4net.Appender;
 using log4net.Core;
 
-namespace log4net.Azure.Tests
+namespace log4net.Appender.Azure.Tests.Appenders
 {
     [TestClass]
-    public class UnitTestAzureAppendBlobAppender
+    public class UnitTestAzureTableAppender
     {
-        private AzureAppendBlobAppender _appender;
+        private AzureTableAppender _appender;
 
         [TestInitialize]
         public void Initialize()
         {
-            _appender = new AzureAppendBlobAppender()
+            _appender = new AzureTableAppender
                 {
                     ConnectionString = "UseDevelopmentStorage=true",
-                    ContainerName = "testLoggingBlob",
-                    DirectoryName = "testLogging"
+                    TableName = "testLoggingTable"
                 };
             _appender.ActivateOptions();
         }
 
         [TestMethod]
-        public void Test_Blob_Appender()
+        public void Test_Table_Appender()
         {
             var @event = MakeEvent();
 
@@ -31,19 +29,30 @@ namespace log4net.Azure.Tests
         }
 
         [TestMethod]
-        public void Test_Blob_Appender_Multiple_5()
+        public void Test_Message_With_Exception()
+        {
+            const string message = "Exception to follow on other line";
+            var ex = new Exception("This is the exception message");
+
+            var @event = new LoggingEvent(null, null, "testLoggerName", Level.Critical, message, ex);
+
+            _appender.DoAppend(@event);
+        }
+
+        [TestMethod]
+        public void Test_Table_Appender_Multiple_5()
         {
             _appender.DoAppend(MakeEvents(5));
         }
 
         [TestMethod]
-        public void Test_Blob_Appender_Multiple_10()
+        public void Test_Table_Appender_Multiple_10()
         {
             _appender.DoAppend(MakeEvents(10));
         }
 
         [TestMethod]
-        public void Test_Blob_Appender_Multiple_100()
+        public void Test_Table_Appender_Multiple_100()
         {
             _appender.DoAppend(MakeEvents(100));
         }
@@ -69,7 +78,7 @@ namespace log4net.Azure.Tests
                         LoggerName = "testLoggerName",
                         Message = "testMessage",
                         ThreadName = "testThreadName",
-                        TimeStamp = DateTime.UtcNow,
+                        TimeStampUtc = DateTime.UtcNow,
                         UserName = "testUsername",
                         LocationInfo = new LocationInfo("className", "methodName", "fileName", "lineNumber")
                     }

@@ -1,8 +1,9 @@
 using System;
 using System.Collections;
+using log4net.Appender.Extensions;
 using log4net.Core;
 
-namespace log4net.Appender
+namespace log4net.Appender.Entities
 {
     internal sealed class AzureDynamicLoggingEventEntity : ElasticTableEntity
     {

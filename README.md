@@ -1,4 +1,3 @@
-[![Stories in Ready](https://badge.waffle.io/stemarie/log4net.Azure.png?label=ready&title=Ready)](https://waffle.io/stemarie/log4net.Azure)
 #log4net.Azure
 
 Transfer all your logs to the [Azure Table or Blob Storage](http://azure.microsoft.com/de-de/services/storage/) via Appender for [log4Net](https://logging.apache.org/log4net/)
@@ -39,11 +38,12 @@ Every log entry is stored in a separate row.
 
 	
 ### BlobStorage
-Every log Entry is stored as separate XML file.
+Every log Entry can be stored as a seperate XML,JSON or TXT file.
 
     <appender name="AzureBlobAppender" type="log4net.Appender.AzureBlobAppender, log4net.Appender.Azure">
       <param name="ContainerName" value="testloggingblob"/>
       <param name="DirectoryName" value="logs"/>
+	    <param name="OutputFormat" value="xml"/>
       <!-- You can either specify a connection string or use the ConnectionStringName property instead -->
       <param name="ConnectionString" value="UseDevelopmentStorage=true"/>
       <!--<param name="ConnectionStringName" value="GlobalConfigurationString" />-->
@@ -53,17 +53,20 @@ Every log Entry is stored as separate XML file.
   Name of the container in Blob Storage	
 * <b>DirectoryName:</b>  
   Name of the folder in the specified container
+* <b>OutputFormat:</b>  
+  The format of the generated log file, will default to XML is value is missing
 * <b>ConnectionString:</b>  
   the full Azure Storage connection string
 * <b>ConnectionStringName:</b>  
   Name of a connection string specified under connectionString
 
 ### AppendBlobStorage
-Every log Entry is stored as separate XML file.
+Every log Entry can be stored as a seperate XML,JSON or TXT file.
 
     <appender name="AzureAppendBlobAppender" type="log4net.Appender.AzureAppendBlobAppender, log4net.Appender.Azure">
       <param name="ContainerName" value="testloggingblob"/>
       <param name="DirectoryName" value="logs"/>
+	    <param name="OutputFormat" value="json"/>
       <!-- You can either specify a connection string or use the ConnectionStringName property instead -->
       <param name="ConnectionString" value="UseDevelopmentStorage=true"/>
       <!--<param name="ConnectionStringName" value="GlobalConfigurationString" />-->
@@ -73,11 +76,21 @@ Every log Entry is stored as separate XML file.
   Name of the container in Blob Storage	
 * <b>DirectoryName:</b>  
   Name of the folder in the specified container
+* <b>OutputFormat:</b>  
+  The format of the generated log file, will default to XML is value is missing
 * <b>ConnectionString:</b>  
   the full Azure Storage connection string
 * <b>ConnectionStringName:</b>  
   Name of a connection string specified under connectionString
   
-## View Logs
+##Formats
 
-You can take a look on this [Site](http://storagetools.azurewebsites.net/) to use one of this tools based on your selected appender.
+Currently XML, JSON and TXT output formats are supported
+
+## Author
+
+**Matthew Mirzai** (https://github.com/TheMirzai)
+
+## Credits
+
+**Karell Ste-Marie** (https://github.com/stemarie) Creator of the original package, which is no longer active.

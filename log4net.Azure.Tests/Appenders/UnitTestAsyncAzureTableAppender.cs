@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using log4net.Appender;
 using log4net.Core;
 
-namespace log4net.Azure.Tests
+namespace log4net.Appender.Azure.Tests.Appenders
 {
     [TestClass]
     public class UnitTestAsyncAzureTableAppender
@@ -14,7 +13,7 @@ namespace log4net.Azure.Tests
         [TestInitialize]
         public void Initialize()
         {
-            _appender = new AsyncAzureTableAppender()
+            _appender = new AsyncAzureTableAppender
                 {
                     ConnectionString = "UseDevelopmentStorage=true",
                     TableName = "testLoggingTable"
@@ -48,7 +47,7 @@ namespace log4net.Azure.Tests
                     LoggerName = "testLoggerName",
                     Message = "Long message - " + string.Join("-", Enumerable.Range(0,1024).Select(i => "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm")),
                     ThreadName = "testThreadName",
-                    TimeStamp = DateTime.UtcNow,
+                    TimeStampUtc = DateTime.UtcNow,
                     UserName = "testUsername",
                     LocationInfo = new LocationInfo("className", "methodName", "fileName", "lineNumber")
                 });
@@ -106,7 +105,7 @@ namespace log4net.Azure.Tests
                         LoggerName = "testLoggerName",
                         Message = "testMessage",
                         ThreadName = "testThreadName",
-                        TimeStamp = DateTime.UtcNow,
+                        TimeStampUtc = DateTime.UtcNow,
                         UserName = "testUsername",
                         LocationInfo = new LocationInfo("className", "methodName", "fileName", "lineNumber")
                     }
