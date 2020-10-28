@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <package >
   <metadata>
-    <id>log4net.Appenders</id>
+    <id>log4net.Appenders.Azure</id>
     <version>1.0.0.0</version>
     <authors>Matthew Mirzai</authors>
     <owners>Matthew Mirzai</owners>
-    <licenseUrl>https://github.com/TheMirzai/log4net.Azure/blob/master/LICENSE.md</licenseUrl>
+    <license>https://github.com/TheMirzai/log4net.Azure/blob/master/LICENSE.md</license>
     <projectUrl>https://github.com/TheMirzai/log4net.Azure</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Transfer all your logs to the Azure Table or Blob Storage via Appender for log4net</description>
@@ -18,12 +18,10 @@
     <dependencies>
       <dependency id="log4net" version="2.0.12" />
       <dependency id="WindowsAzure.Storage" version="9.3.3" />
-      <dependency id="Newtonsoft.Json" version="12.0.3 /> 
+      <dependency id="Newtonsoft.Json" version="12.0.3" />
     </dependencies>
   </metadata>
   <files>
-    <file src="./log4net.Appender.API/bin/Release/log4net.Appender.API.dll" target="lib/Release" />
-    <file src="./log4net.Appender.API/bin/Release/log4net.Appender.API.xml" target="lib/Release" />
     <file src="./log4net.Azure/bin/Release/log4net.Appender.Azure.dll" target="lib/Release" />
     <file src="./log4net.Azure/bin/Release/log4net.Appender.Azure.xml" target="lib/Release" />
   </files>

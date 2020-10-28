@@ -1,4 +1,4 @@
-#log4net.Azure
+# log4net.Azure
 
 Transfer all your logs to the [Azure Table or Blob Storage](http://azure.microsoft.com/de-de/services/storage/) via Appender for [log4Net](https://logging.apache.org/log4net/)
 
@@ -38,7 +38,7 @@ Every log entry is stored in a separate row.
 
 	
 ### BlobStorage
-Every log Entry can be stored as a seperate XML,JSON or TXT file.
+Every log Entry can be stored as a seperate XML, JSON or TXT file.
 
     <appender name="AzureBlobAppender" type="log4net.Appender.AzureBlobAppender, log4net.Appender.Azure">
       <param name="ContainerName" value="testloggingblob"/>
@@ -61,7 +61,7 @@ Every log Entry can be stored as a seperate XML,JSON or TXT file.
   Name of a connection string specified under connectionString
 
 ### AppendBlobStorage
-Every log Entry can be stored as a seperate XML,JSON or TXT file.
+Every log Entry can be stored as a seperate XML, JSON or TXT file.
 
     <appender name="AzureAppendBlobAppender" type="log4net.Appender.AzureAppendBlobAppender, log4net.Appender.Azure">
       <param name="ContainerName" value="testloggingblob"/>
@@ -83,7 +83,7 @@ Every log Entry can be stored as a seperate XML,JSON or TXT file.
 * <b>ConnectionStringName:</b>  
   Name of a connection string specified under connectionString
   
-##Formats
+## Formats
 
 Currently XML, JSON and TXT output formats are supported
 
