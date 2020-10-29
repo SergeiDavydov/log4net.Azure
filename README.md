@@ -5,7 +5,7 @@ Transfer all your logs to the [Azure Table or Blob Storage](http://azure.microso
 ## Install
 Add To project via NuGet:  
 1. Right click on a project and click 'Manage NuGet Packages'.  
-2. Search for 'log4net.Appender.Azure' and click 'Install'.  
+2. Search for 'log4net.Appenders.Azure' and click 'Install'.  
 
 ## Configuration
 ### Table Storage 
@@ -43,7 +43,7 @@ Every log Entry can be stored as a seperate XML, JSON or TXT file.
     <appender name="AzureBlobAppender" type="log4net.Appender.AzureBlobAppender, log4net.Appender.Azure">
       <param name="ContainerName" value="testloggingblob"/>
       <param name="DirectoryName" value="logs"/>
-	    <param name="OutputFormat" value="xml"/>
+      <param name="OutputFormat" value="xml"/>
       <!-- You can either specify a connection string or use the ConnectionStringName property instead -->
       <param name="ConnectionString" value="UseDevelopmentStorage=true"/>
       <!--<param name="ConnectionStringName" value="GlobalConfigurationString" />-->
@@ -66,7 +66,7 @@ Every log Entry can be stored as a seperate XML, JSON or TXT file.
     <appender name="AzureAppendBlobAppender" type="log4net.Appender.AzureAppendBlobAppender, log4net.Appender.Azure">
       <param name="ContainerName" value="testloggingblob"/>
       <param name="DirectoryName" value="logs"/>
-	    <param name="OutputFormat" value="json"/>
+      <param name="OutputFormat" value="json"/>
       <!-- You can either specify a connection string or use the ConnectionStringName property instead -->
       <param name="ConnectionString" value="UseDevelopmentStorage=true"/>
       <!--<param name="ConnectionStringName" value="GlobalConfigurationString" />-->
