@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using log4net.Core;
 using log4net.Layout;
 using System.IO;
+using log4net.Appender.Enums;
 using Newtonsoft.Json;
 
 namespace log4net.Appender.Extensions
@@ -119,7 +120,7 @@ namespace log4net.Appender.Extensions
                 case PartitionKeyTypeEnum.DateReverse:
                     // subtract from DateMaxValue the Tick Count of the current hour
                     // so a Table Storage Partition spans an hour
-                    return $"{(DateTime.MaxValue.Ticks - loggingEvent.TimeStamp.Date.AddHours(loggingEvent.TimeStamp.Hour).Ticks + 1):D19}";
+                    return $"{(DateTime.MaxValue.Ticks - loggingEvent.TimeStampUtc.Date.AddHours(loggingEvent.TimeStamp.Hour).Ticks + 1):D19}";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(partitionKeyType), partitionKeyType, null);
             }

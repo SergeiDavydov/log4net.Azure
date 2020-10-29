@@ -1,10 +1,10 @@
-﻿using log4net.Appender.Language;
-using System;
+﻿using System;
 using System.Configuration;
+using log4net.Appender.Language;
 
-namespace log4net.Appender
+namespace log4net.Appender.Utility
 {
-    public static class Util
+    public static class ConnectionStringUtilities
     {
         /// <summary>
         /// Attempt to retrieve the connection string using ConfigurationManager 

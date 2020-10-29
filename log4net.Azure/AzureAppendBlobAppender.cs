@@ -8,6 +8,7 @@ using log4net.Appender.Extensions;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using log4net.Appender.Language;
+using log4net.Appender.Utility;
 using log4net.Core;
 
 namespace log4net.Appender
@@ -35,7 +36,7 @@ namespace log4net.Appender
             {
                 if (!string.IsNullOrWhiteSpace(ConnectionStringName))
                 {
-                    return Util.GetConnectionString(ConnectionStringName);
+                    return ConnectionStringUtilities.GetConnectionString(ConnectionStringName);
                 }
                 if (string.IsNullOrEmpty(_connectionString))
                     throw new ApplicationException(Resources.AzureConnectionStringNotSpecified);
@@ -107,12 +108,10 @@ namespace log4net.Appender
             }
             else if(OutputFormat.Equals(Format.Json))
             {
-                //This creates invalid JSON but does what I need it to do - need to download, serialize, add and reserialize before sending back up otherwise
                 output = $"{loggingEvent.GetJsonString()}";
             }
             else if (OutputFormat.Equals(Format.String))
             {
-                _lineFeed = Environment.NewLine;
                 output = $"{loggingEvent.GetString()}";
             }
 

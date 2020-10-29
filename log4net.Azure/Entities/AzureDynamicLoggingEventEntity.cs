@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using log4net.Appender.Enums;
 using log4net.Appender.Extensions;
 using log4net.Core;
 

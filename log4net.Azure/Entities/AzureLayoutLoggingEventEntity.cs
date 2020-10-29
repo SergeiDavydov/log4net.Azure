@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using log4net.Appender.Enums;
 using log4net.Appender.Extensions;
 using Microsoft.WindowsAzure.Storage.Table;
 using log4net.Core;

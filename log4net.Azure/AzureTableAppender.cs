@@ -6,6 +6,8 @@ using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Linq;
 using log4net.Appender.Entities;
+using log4net.Appender.Enums;
+using log4net.Appender.Utility;
 
 namespace log4net.Appender
 {
@@ -31,7 +33,7 @@ namespace log4net.Appender
             {
                 if (!string.IsNullOrWhiteSpace(ConnectionStringName))
                 {
-                    return Util.GetConnectionString(ConnectionStringName);
+                    return ConnectionStringUtilities.GetConnectionString(ConnectionStringName);
                 }
                 if (string.IsNullOrEmpty(_connectionString))
                     throw new ApplicationException(Resources.AzureConnectionStringNotSpecified);
