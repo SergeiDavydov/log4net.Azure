@@ -1,6 +1,6 @@
-# log4net.Azure
+# log4net.Appenders.Azure
 
-Transfer all your logs to the [Azure Table or Blob Storage](http://azure.microsoft.com/de-de/services/storage/) via Appender for [log4Net](https://logging.apache.org/log4net/)
+Transfer all your logs to the [Azure Table or Blob Storage](http://azure.microsoft.com/de-de/services/storage/) via Appender for [log4Net](https://logging.apache.org/log4net/), and customise the format of logs
 
 ## Install
 Add To project via NuGet:  
