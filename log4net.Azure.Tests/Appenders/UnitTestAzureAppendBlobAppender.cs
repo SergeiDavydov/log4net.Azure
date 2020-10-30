@@ -17,7 +17,8 @@ namespace log4net.Appender.Azure.Tests.Appenders
                 ConnectionString = "UseDevelopmentStorage=true",
                 ContainerName = "testLoggingBlob",
                 DirectoryName = "testLogging",
-                OutputFormat = "json"
+                FileFormat = "json",
+                DocumentName = "logs"
             };
             _appender.ActivateOptions();
         }

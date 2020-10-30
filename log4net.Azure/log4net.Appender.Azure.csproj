@@ -80,7 +80,7 @@
     <Compile Include="AsyncAzureTableAppender.cs" />
     <Compile Include="AzureTableAppender.cs" />
     <Compile Include="AzureBlobAppender.cs" />
-    <Compile Include="Constants\Formats.cs" />
+    <Compile Include="Constants\FileFormats.cs" />
     <Compile Include="Entities\ElasticTableEntity.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\LoggingEventExtensions.cs" />

@@ -43,7 +43,8 @@ Every log Entry can be stored as a seperate XML, JSON or TXT file.
     <appender name="AzureBlobAppender" type="log4net.Appender.AzureBlobAppender, log4net.Appender.Azure">
       <param name="ContainerName" value="testloggingblob"/>
       <param name="DirectoryName" value="logs"/>
-      <param name="OutputFormat" value="xml"/>
+      <param name="FileFormat" value="xml"/>
+      <param name="DocumentName" value="logs"/>
       <!-- You can either specify a connection string or use the ConnectionStringName property instead -->
       <param name="ConnectionString" value="UseDevelopmentStorage=true"/>
       <!--<param name="ConnectionStringName" value="GlobalConfigurationString" />-->
@@ -53,8 +54,10 @@ Every log Entry can be stored as a seperate XML, JSON or TXT file.
   Name of the container in Blob Storage	
 * <b>DirectoryName:</b>  
   Name of the folder in the specified container
-* <b>OutputFormat:</b>  
-  The format of the generated log file, will default to XML is value is missing
+* <b>FileFormat:</b>  
+  <i>Optional</i> - The format of the generated log file, will default to XML is value is missing
+* <b>DocumentName:</b>  
+  <i>Optional</i> - The name of the generated log file, will default to 'entry.log' if value is missing. String format is {DateTime}.{DocumentName}.{FileFormat}
 * <b>ConnectionString:</b>  
   the full Azure Storage connection string
 * <b>ConnectionStringName:</b>  
@@ -66,7 +69,8 @@ Every log Entry can be stored as a seperate XML, JSON or TXT file.
     <appender name="AzureAppendBlobAppender" type="log4net.Appender.AzureAppendBlobAppender, log4net.Appender.Azure">
       <param name="ContainerName" value="testloggingblob"/>
       <param name="DirectoryName" value="logs"/>
-      <param name="OutputFormat" value="json"/>
+      <param name="FileFormat" value="json"/>
+      <param name="DocumentName" value="logs"/>
       <!-- You can either specify a connection string or use the ConnectionStringName property instead -->
       <param name="ConnectionString" value="UseDevelopmentStorage=true"/>
       <!--<param name="ConnectionStringName" value="GlobalConfigurationString" />-->
@@ -76,8 +80,10 @@ Every log Entry can be stored as a seperate XML, JSON or TXT file.
   Name of the container in Blob Storage	
 * <b>DirectoryName:</b>  
   Name of the folder in the specified container
-* <b>OutputFormat:</b>  
-  The format of the generated log file, will default to XML is value is missing
+* <b>FileFormat:</b>  
+  <i>Optional</i> - The format of the generated log file, will default to XML is value is missing
+* <b>DocumentName:</b>  
+  <i>Optional</i> - The name of the generated log file, will default to 'entry.log' if value is missing. String format is {DateTime}.{DocumentName}.{FileFormat}
 * <b>ConnectionString:</b>  
   the full Azure Storage connection string
 * <b>ConnectionStringName:</b>  

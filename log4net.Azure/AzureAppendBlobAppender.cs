@@ -71,12 +71,20 @@ namespace log4net.Appender
             set => _directoryName = value;
         }
 
-        private string _outputFormat;
+        private string _fileFormat;
 
-        public string OutputFormat
+        public string FileFormat
         {
-            get => _outputFormat is null ? Format.Xml.ToLowerInvariant() : _outputFormat.ToLowerInvariant();
-            set => _outputFormat = value;
+            get => string.IsNullOrEmpty(_fileFormat) ? FileFormats.Xml.ToLowerInvariant() : _fileFormat.ToLowerInvariant();
+            set => _fileFormat = value;
+        }
+
+        private string _documentName;
+
+        public string DocumentName
+        {
+            get => _documentName is null ? "entry.log" : _documentName.ToLowerInvariant();
+            set => _documentName = value;
         }
 
         /// <summary>
@@ -90,7 +98,7 @@ namespace log4net.Appender
         /// </remarks>
         protected override void SendBuffer(LoggingEvent[] events)
         {
-            var appendBlob = _cloudBlobContainer.GetAppendBlobReference(Filename(_directoryName, _outputFormat));
+            var appendBlob = _cloudBlobContainer.GetAppendBlobReference(Filename(_directoryName, _fileFormat, _documentName));
             if (!appendBlob.Exists()) appendBlob.CreateOrReplace();
             else _lineFeed = Environment.NewLine;
 
@@ -99,18 +107,18 @@ namespace log4net.Appender
 
         private void ProcessEvent(LoggingEvent loggingEvent)
         {
-            var appendBlob = _cloudBlobContainer.GetAppendBlobReference(Filename(_directoryName, _outputFormat));
+            var appendBlob = _cloudBlobContainer.GetAppendBlobReference(Filename(_directoryName, _fileFormat, _documentName));
             var output = string.Empty;
 
-            if (OutputFormat.Equals(Format.Xml))
+            if (FileFormat.Equals(FileFormats.Xml))
             {
                 output = $"{_lineFeed}{loggingEvent.GetXmlString(Layout)}";
             }
-            else if(OutputFormat.Equals(Format.Json))
+            else if(FileFormat.Equals(FileFormats.Json))
             {
                 output = $"{loggingEvent.GetJsonString()}";
             }
-            else if (OutputFormat.Equals(Format.String))
+            else if (FileFormat.Equals(FileFormats.String))
             {
                 output = $"{loggingEvent.GetString()}";
             }
@@ -122,9 +130,9 @@ namespace log4net.Appender
             }
         }
 
-        private static string Filename(string directoryName, string fileFormat)
+        private static string Filename(string directoryName, string fileFormat, string documentName)
         {
-            return $"{directoryName}/{DateTime.Today.ToString("yyyy_MM_dd", DateTimeFormatInfo.InvariantInfo)}.entry.log.{fileFormat}";
+            return $"{directoryName}/{DateTime.Today.ToString("yyyy_MM_dd", DateTimeFormatInfo.InvariantInfo)}.{documentName}.{fileFormat}";
         }
 
         /// <summary>

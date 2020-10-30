@@ -68,12 +68,20 @@ namespace log4net.Appender
             set => _directoryName = value;
         }
 
-        private string _outputFormat;
+        private string _fileFormat;
 
-        public string OutputFormat
+        public string FileFormat
         {
-            get => _outputFormat is null ? Format.Xml.ToLowerInvariant() : _outputFormat.ToLowerInvariant();
-            set => _outputFormat = value;
+            get => string.IsNullOrEmpty(_fileFormat) ? FileFormats.Xml.ToLowerInvariant() : _fileFormat.ToLowerInvariant();
+            set => _fileFormat = value;
+        }
+
+        private string _documentName;
+
+        public string DocumentName
+        {
+            get => _documentName is null ? "entry.log" : _documentName.ToLowerInvariant();
+            set => _documentName = value;
         }
 
         /// <summary>
@@ -92,18 +100,18 @@ namespace log4net.Appender
 
         private void ProcessEvent(LoggingEvent loggingEvent)
         {
-            var blob = _cloudBlobContainer.GetBlockBlobReference(Filename(loggingEvent, _directoryName, _outputFormat));
+            var blob = _cloudBlobContainer.GetBlockBlobReference(Filename(loggingEvent, _directoryName, _fileFormat, _documentName));
             var output = string.Empty;
 
-            if (OutputFormat.Equals(Format.Xml))
+            if (FileFormat.Equals(FileFormats.Xml))
             {
                 output = loggingEvent.GetXmlString(Layout);
             }
-            else if (OutputFormat.Equals(Format.Json))
+            else if (FileFormat.Equals(FileFormats.Json))
             {
                 output = $"[{loggingEvent.GetJsonString()}]";
             }
-            else if (OutputFormat.Equals(Format.String))
+            else if (FileFormat.Equals(FileFormats.String))
             {
                 output = loggingEvent.GetString();
             }
@@ -112,9 +120,9 @@ namespace log4net.Appender
             blob.UploadText(output);
         }
 
-        private static string Filename(LoggingEvent loggingEvent, string directoryName, string fileFormat)
+        private static string Filename(LoggingEvent loggingEvent, string directoryName, string fileFormat, string documentName)
         {
-            return $"{directoryName}/{loggingEvent.TimeStamp.ToString("yyyy_MM_dd_HH_mm_ss_fffffff", DateTimeFormatInfo.InvariantInfo)}.{Guid.NewGuid().ToString().ToLower()}.entry.log.{fileFormat}";
+            return $"{directoryName}/{loggingEvent.TimeStamp.ToString("yyyy_MM_dd_HH_mm_ss_fffffff", DateTimeFormatInfo.InvariantInfo)}.{Guid.NewGuid().ToString().ToLower()}.{documentName}.{fileFormat}";
         }
 
         /// <summary>

@@ -1,6 +1,6 @@
 ﻿namespace log4net.Appender.Constants
 {
-    public class Format
+    public class FileFormats
     {
         public const string Xml = "xml";
         public const string Json = "json";
