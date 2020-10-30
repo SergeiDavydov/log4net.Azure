@@ -58,11 +58,11 @@ Every log Entry can be stored as a seperate XML, JSON or TXT file.
   Name of the folder in the specified container
 * <b>FileFormat:</b>  
   <i>Optional</i></br>
-  Default: XML
+  Default: XML</br>
   The format of the generated log file, can be either <i>xml</i>, <i>txt</i> or <i>json</i>
 * <b>DocumentName:</b>  
   <i>Optional</i></br>
-  Default: 'entry.log'
+  Default: 'entry.log'</br>
   The name of the generated log file. String format is {DateTime}.{DocumentName}.{FileFormat}
 * <b>ConnectionString:</b>  
   The full Azure Storage connection string
@@ -88,11 +88,11 @@ Every log Entry can be stored as a seperate XML, JSON or TXT file.
   Name of the folder in the specified container
 * <b>FileFormat:</b>  
   <i>Optional</i></br>
-  Default: XML
+  Default: XML</br>
   The format of the generated log file, can be either <i>xml</i>, <i>txt</i> or <i>json</i>
 * <b>DocumentName:</b>  
   <i>Optional</i></br>
-  Default: 'entry.log'
+  Default: 'entry.log'</br>
   The name of the generated log file. String format is {DateTime}.{DocumentName}.{FileFormat}
 * <b>ConnectionString:</b>  
   The full Azure Storage connection string
